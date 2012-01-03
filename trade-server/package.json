@@ -1,0 +1,9 @@
+{
+  "name": "trade-server",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+		"async": ">= 0.1.15",
+		"bigint": "= 0.3.8"
+  }
+}
