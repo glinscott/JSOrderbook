@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
 		"async": ">= 0.1.15",
-		"bigint": "= 0.3.8"
+		"bigint": "= 0.3.8",
+		"express": "= 2.5.4"
   }
 }
