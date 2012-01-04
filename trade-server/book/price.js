@@ -1,1 +1,1 @@
-function Price(){};
+function Price(){}
