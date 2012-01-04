@@ -1,1 +1,12 @@
-function Limit(){};
+////////////////////////////////////////////////////////////////////////////
+// Limit
+//
+// Represents a single price point for orders.  Stores orders in FIFO
+// fashion, so the first order when we match the price wins.
+////////////////////////////////////////////////////////////////////////////
+function Limit() {
+	this.price = 0;
+	this.totalVolume = 0;
+	this.ordersHead = null;
+}
+

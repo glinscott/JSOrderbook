@@ -1,4 +1,15 @@
-function OrderBook(){};
+var Tree = require('bintrees').RBTree;
+
+function OrderBook() {
+	var compareLimit = function(l1, l2) {
+		return l1.price - l2.price;
+	};
+	
+	this.bidTree = new Tree(compareLimit);
+	this.askTree = new Tree(compareLimit);
+	this.lowestBid = null;
+	this.lowestAsk = null;
+}
 
 //////////////////////////////////////
 // Core
