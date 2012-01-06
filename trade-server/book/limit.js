@@ -4,28 +4,45 @@ var assert = require('assert');
 // Limit
 //
 // Represents a single price point for orders.  Stores orders in FIFO
-// fashion, so the first order when we match the price wins.
+// fashion.
 ////////////////////////////////////////////////////////////////////////////
 function Limit(price) {
-	this.price = price;
-	this.totalVolume = 0;
-	this.ordersHead = null;
-	this.ordersTail = null;
+	this._price = price;
+	this._totalVolume = 0;
+	this._ordersHead = null;
+	this._ordersTail = null;
+}
+
+Limit.prototype.getHead = function() {
+	return this._ordersHead;
+};
+
+Limit.prototype.getTotalVolume = function() {
+	return this._totalVolume;
 }
 
 Limit.prototype.addOrder = function(order) {
-	if (this.ordersHead === null) {
-		assert.equal(this.ordersTail, null);
+	if (this._ordersHead === null) {
+		assert.equal(this._ordersTail, null);
+		assert.equal(this._totalVolume, 0);
 		
-		this.ordersHead = order;
-		this.ordersTail = order;
+		this._ordersHead = order;
+		this._ordersTail = order;
+	
+		this._totalVolume += order.numShares;
 		return;
 	}
 	
-	assert.notEqual(this.ordersTail, null);
+	assert.notEqual(this._ordersTail, null);
 	
-	this.ordersTail.nextOrder = order;
-	order.prevOrder = this.ordersTail;
+	if (this._ordersTail.orderType !== order.orderType) {
+		throw new Exception('Order types must match for limits');
+	}
+	
+	this._ordersTail.nextOrder = order;
+	order.prevOrder = this._ordersTail;
+	
+	this._totalVolume += order.numShares;
 };
 
 Limit.prototype.removeOrder = function(order) {
@@ -39,11 +56,13 @@ Limit.prototype.removeOrder = function(order) {
 		next.prevOrder = prev;
 	}
 	
-	if (order === this.ordersHead) {
-		this.ordersHead = next;
+	this._totalVolume -= order.numShares;
+	
+	if (order === this._ordersHead) {
+		this._ordersHead = next;
 	}
-	if (order == this.ordersTail) {
-		this.ordersTail = prev;
+	if (order === this._ordersTail) {
+		this._ordersTail = prev;
 	}
 };
 
