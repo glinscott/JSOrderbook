@@ -45,7 +45,7 @@ OrderBook.prototype.bestAsk = function() {
 OrderBook.prototype.market = function(order) {
 };
 
-// Replaces the given orderId, with newOrder
+// Replaces the given orderId with newOrder
 OrderBook.prototype.replace = function(orderId, newOrder) {
 	
 };
