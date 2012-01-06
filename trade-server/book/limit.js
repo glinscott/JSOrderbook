@@ -22,6 +22,12 @@ Limit.prototype.getTotalVolume = function() {
 }
 
 Limit.prototype.addOrder = function(order) {
+	if (order.limit !== -1) {
+		throw new Error('Order has already been added');
+	}
+	
+	order.limit = this._price;
+	
 	if (this._ordersHead === null) {
 		assert.equal(this._ordersTail, null);
 		assert.equal(this._totalVolume, 0);
