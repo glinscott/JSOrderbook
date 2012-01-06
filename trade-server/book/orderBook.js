@@ -55,3 +55,5 @@ OrderBook.prototype.replace = function(orderId, newOrder) {
 OrderBook.prototype.post = function(order, offset) {
 	
 };
+
+exports.OrderBook = OrderBook;
