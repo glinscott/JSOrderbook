@@ -9,6 +9,8 @@ function Order(id, orderType, limit, numShares, entryTime) {
 	this.orderType = orderType;
 	this.numShares = numShares;
 	this.entryTime = entryTime;
+	
+	this.filled = 0;
 
 	// Initialized when added to Limit
 	this.prevOrder = null;
