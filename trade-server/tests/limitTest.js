@@ -4,17 +4,17 @@ var Order = require('../book/order');
 
 var orderId = 0;
 function createOrder(type, numShares) {
-	return new Order.Order(orderId++, type, numShares, 0);
+	return new Order.Order(orderId++, type, 100, numShares, 0);
 }
 
 function testAddRemove() {
 	var testLimit = new Limit.Limit(100);
 	var order1 = createOrder(Order.OrderTypes.Bid, 10);
-	assert.equal(order1.limit, -1);
+	assert.equal(order1.isBooked(), false);
 	testLimit.addOrder(order1);
 	assert.equal(testLimit.getHead(), order1);
 	assert.equal(testLimit.getTotalVolume(), 10);
-	assert.equal(order1.limit, 100);
+	assert.equal(order1.isBooked(), true);
 	
 	var order2 = createOrder(Order.OrderTypes.Bid, 15);
 	testLimit.addOrder(order2);

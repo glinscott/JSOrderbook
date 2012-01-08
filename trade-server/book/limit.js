@@ -13,20 +13,27 @@ function Limit(price) {
 	this._ordersTail = null;
 }
 
-Limit.prototype.getHead = function() {
-	return this._ordersHead;
+Limit.prototype.getPrice = function() {
+	return this._price;
 };
 
 Limit.prototype.getTotalVolume = function() {
 	return this._totalVolume;
-}
+};
+
+Limit.prototype.getHead = function() {
+	return this._ordersHead;
+};
 
 Limit.prototype.addOrder = function(order) {
-	if (order.limit !== -1) {
+	if (order.isBooked()) {
 		throw new Error('Order has already been added');
 	}
+	if (order.limit != this.getPrice()) {
+		throw new Error('Order not booked against correct Limit')
+	}
 	
-	order.limit = this._price;
+	order.book();
 	
 	if (this._ordersHead === null) {
 		assert.equal(this._ordersTail, null);

@@ -3,16 +3,17 @@ function OrderTypes() {
 	this.Ask = 1;
 }
 
-function Order(id, orderType, numShares, entryTime) {
+function Order(id, orderType, limit, numShares, entryTime) {
 	this.id = id;
+	this.limit = limit;
 	this.orderType = orderType;
 	this.numShares = numShares;
 	this.entryTime = entryTime;
 
 	// Initialized when added to Limit
-	this.limit = -1;
 	this.prevOrder = null;
 	this.nextOrder = null;
+	this._isBooked = false;
 }
 
 Order.prototype.isBid = function() {
@@ -21,6 +22,14 @@ Order.prototype.isBid = function() {
 
 Order.prototype.isAsk = function() {
 	return this.orderType === OrderTypes.Ask;
+};
+
+Order.prototype.isBooked = function() {
+	return this._isBooked;
+};
+
+Order.prototype.book = function() {
+	this._isBooked = true;
 };
 
 exports.OrderTypes = OrderTypes;
