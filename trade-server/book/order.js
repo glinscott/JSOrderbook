@@ -1,7 +1,9 @@
-function OrderTypes() {
+function OrderTypesEnum() {
 	this.Bid = 0;
 	this.Ask = 1;
 }
+
+var OrderTypes = new OrderTypesEnum();
 
 function Order(id, orderType, limit, numShares, entryTime) {
 	this.id = id;
@@ -15,7 +17,7 @@ function Order(id, orderType, limit, numShares, entryTime) {
 	// Initialized when added to Limit
 	this.prevOrder = null;
 	this.nextOrder = null;
-	this._isBooked = false;
+	this._parentLimit = null;
 }
 
 Order.prototype.isBid = function() {
@@ -27,11 +29,19 @@ Order.prototype.isAsk = function() {
 };
 
 Order.prototype.isBooked = function() {
-	return this._isBooked;
+	return this._parentLimit !== null;
 };
 
-Order.prototype.book = function() {
-	this._isBooked = true;
+Order.prototype.getParentLimit = function() {
+	return this._parentLimit;
+};
+
+Order.prototype.book = function(parentLimit) {
+	this._parentLimit = parentLimit;
+};
+
+Order.prototype.getAvailableShares = function() {
+	return this.numShares - this.filled;
 };
 
 exports.OrderTypes = OrderTypes;

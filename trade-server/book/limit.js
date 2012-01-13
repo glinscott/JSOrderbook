@@ -25,6 +25,10 @@ Limit.prototype.getHead = function() {
 	return this._ordersHead;
 };
 
+Limit.prototype.isEmpty = function() {
+	return this._ordersHead === null;
+};
+
 Limit.prototype.addOrder = function(order) {
 	if (order.isBooked()) {
 		throw new Error('Order has already been added');
@@ -33,8 +37,8 @@ Limit.prototype.addOrder = function(order) {
 		throw new Error('Order not booked against correct Limit')
 	}
 	
-	order.book();
-	
+	order.book(this);
+
 	if (this._ordersHead === null) {
 		assert.equal(this._ordersTail, null);
 		assert.equal(this._totalVolume, 0);
@@ -62,6 +66,10 @@ Limit.prototype.removeOrder = function(order) {
 	var prev = order.prevOrder,
 			next = order.nextOrder;
 	
+	if (order.getParentLimit() !== this) {
+		throw new Error('Attempting to remove Order from incorrect Limit');		
+	}
+
 	if (prev !== null) {
 		prev.nextOrder = next;
 	}
