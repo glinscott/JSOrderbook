@@ -35,7 +35,7 @@ function createDefaultLimit() {
 	var orders = [];
 	orders[0] = createOrder(Order.OrderTypes.Ask, 10);
 	orders[1] = createOrder(Order.OrderTypes.Ask, 10);
- 	orders[2]= createOrder(Order.OrderTypes.Ask, 10);
+	orders[2] = createOrder(Order.OrderTypes.Ask, 10);
 	testLimit.addOrder(orders[0]);
 	testLimit.addOrder(orders[1]);
 	testLimit.addOrder(orders[2]);
@@ -61,7 +61,7 @@ function testRemoveAdd() {
 function testAddOrderTwice() {
 	var t = createDefaultLimit();
 	assert.throws(function() {
-		t.limit.addOrder(t.orders[0])
+		t.limit.addOrder(t.orders[0]);
 	});
 }
 

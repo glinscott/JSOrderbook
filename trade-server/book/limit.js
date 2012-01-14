@@ -43,8 +43,8 @@ Limit.prototype.addOrder = function(order) {
 	if (order.isBooked()) {
 		throw new Error('Order has already been added');
 	}
-	if (order.limit != this.getPrice()) {
-		throw new Error('Order not booked against correct Limit')
+	if (order.limit !== this.getPrice()) {
+		throw new Error('Order not booked against correct Limit');
 	}
 	
 	order.book(this);

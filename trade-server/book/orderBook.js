@@ -120,7 +120,7 @@ OrderBook.prototype._execute = function() {
 	var bidHead = this._highestBid.getHead(),
 			askHead = this._lowestAsk.getHead();
 
-	var min = function(a, b) { return a < b ? a : b };
+	var min = function(a, b) { return a < b ? a : b; };
 	var crossSize = min(bidHead.getAvailableShares(), askHead.getAvailableShares());
 	
 	// Execute the trade at the bid price, for crossSize shares
