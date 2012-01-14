@@ -113,7 +113,8 @@ OrderBook.prototype.market = function(order) {
 
 // Replaces the given orderId with newOrder
 OrderBook.prototype.replace = function(orderId, newOrder) {
-	
+	this.cancel(orderId);
+	this.limit(newOrder);
 };
 
 // Adds an order that is guaranteed to add liquidity to the market.  Prices

@@ -30,8 +30,12 @@ function TestHarness() {
 	
 	this.cancelOrder = function(orderId, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
 		book.cancel(orderId);
-		
 		return this.verify(null, bestBid, bestAsk, expectedBidVol, expectedAskVol);
+	};
+	
+	this.replaceOrder = function(orderId, newOrder, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
+		book.replace(orderId, newOrder);
+		return this.verify(newOrder, bestBid, bestAsk, expectedBidVol, expectedAskVol);
 	};
 	
 	this.verify = function(order, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
@@ -108,6 +112,14 @@ function testMarketOrder() {
 	t.placeOrder(createOrder(Order.OrderTypes.Market | Order.OrderTypes.Bid, 0, 6), Price.BestBid, Price.NoAsk, 6, 0);
 }
 
+function testReplaceOrder() {
+	var t = new TestHarness();
+	var o1 = t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
+	var o2 = t.placeOrder(createOrder(Order.OrderTypes.Ask, 20, 10), 15, 20, 10, 10);
+	t.replaceOrder(o2.id, createOrder(Order.OrderTypes.Ask, 15, 5), 15, Price.NoAsk, 5, 0);
+}
+
 testBasics();
 testCancel();
 testMarketOrder();
+testReplaceOrder();
