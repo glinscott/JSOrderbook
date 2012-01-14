@@ -103,11 +103,7 @@ OrderBook.prototype.bestAsk = function() {
 // Market Order - executes immediately at the best price possible.
 // Returns the id of the executed order.
 OrderBook.prototype.market = function(order) {
-	if (order.isAsk()) {
-		order.price = Price.BestAsk;
-	} else if (order.isBid()) {
-		order.price = Price.BestBid;
-	}
+	order.price = order.isAsk() ? Price.BestAsk : Price.BestBid;
 	return this.limit(order);
 };
 
@@ -120,7 +116,20 @@ OrderBook.prototype.replace = function(orderId, newOrder) {
 // Adds an order that is guaranteed to add liquidity to the market.  Prices
 // the order at the best price + offset
 OrderBook.prototype.post = function(order, offset) {
-	
+	var price;
+	if (order.isAsk()) {
+		if (this._highestBid === null) {
+			throw new Error('Unable to place post ask when there are no bids');
+		}
+		price = this.bestBid() - offset;
+	} else {
+		if (this._lowestAsk === null) {
+			throw new Error('Unable to place post bid when there are no asks');
+		}
+		price = this.bestAsk() + offset;
+	}
+	order.price = price;
+	this.limit(order);
 };
 
 //////////////////////////////////////

@@ -9,7 +9,7 @@ function createOrder(type, price, numShares) {
 }
 
 function TestHarness() {
-	var book = new OrderBook.OrderBook();
+	this.book = new OrderBook.OrderBook();
 
 	this.typeLimit = 0;
 	this.typeMarket = 1;
@@ -18,23 +18,23 @@ function TestHarness() {
 
 	this.placeOrder = function(order, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
 		if (order.isMarket()) {
-			book.market(order);
+			this.book.market(order);
 		} else if (order.isPost()) {
-			book.post(order);
+			this.book.post(order, 1);
 		} else {
-			book.limit(order);
+			this.book.limit(order);
 		}
 		
 		return this.verify(order, bestBid, bestAsk, expectedBidVol, expectedAskVol);
 	};
 	
 	this.cancelOrder = function(orderId, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
-		book.cancel(orderId);
+		this.book.cancel(orderId);
 		return this.verify(null, bestBid, bestAsk, expectedBidVol, expectedAskVol);
 	};
 	
 	this.replaceOrder = function(orderId, newOrder, bestBid, bestAsk, expectedBidVol, expectedAskVol) {
-		book.replace(orderId, newOrder);
+		this.book.replace(orderId, newOrder);
 		return this.verify(newOrder, bestBid, bestAsk, expectedBidVol, expectedAskVol);
 	};
 	
@@ -45,17 +45,17 @@ function TestHarness() {
 				bidLimits,
 				askLimits;
 
-		assert.equal(book.bestBid(), bestBid);
-		assert.equal(book.bestAsk(), bestAsk);
+		assert.equal(this.book.bestBid(), bestBid);
+		assert.equal(this.book.bestAsk(), bestAsk);
 
 		// TOOD: use underscore for this
-		bidLimits = book.allBidLimits();
+		bidLimits = this.book.allBidLimits();
 		for (i = 0; i < bidLimits.length; i++) {
 			newBidVol += bidLimits[i].getTotalVolume();
 		}
 		assert.equal(newBidVol, expectedBidVol);
 
-		askLimits = book.allAskLimits();
+		askLimits = this.book.allAskLimits();
 		for (i = 0; i < askLimits.length; i++) {
 			newAskVol += askLimits[i].getTotalVolume();
 		}
@@ -119,7 +119,26 @@ function testReplaceOrder() {
 	t.replaceOrder(o2.id, createOrder(Order.OrderTypes.Ask, 15, 5), 15, Price.NoAsk, 5, 0);
 }
 
+function testPostOrder() {
+	var t = new TestHarness();
+	
+	// Can't place post orders when the book is empty
+	assert.throws(function() {
+		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Bid, 0, 10), 5)
+	}, /no ask/);
+	assert.throws(function() {
+		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Ask, 0, 10), 5)
+	}, /no bid/);
+
+	// Normal tests
+	t.placeOrder(createOrder(Order.OrderTypes.Bid, 5, 10), 5, Price.NoAsk, 10, 0);
+	t.placeOrder(createOrder(Order.OrderTypes.Ask, 20, 10), 5, 20, 10, 10);
+	t.placeOrder(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Bid, 0, 4), 5, 20, 10, 6);
+	t.placeOrder(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Ask, 0, 6), 5, 20, 4, 6);
+}
+
 testBasics();
 testCancel();
 testMarketOrder();
 testReplaceOrder();
+testPostOrder();
