@@ -30,7 +30,7 @@ OrderBook.prototype.limit = function(order) {
 		throw new Error('Order type must be bid or ask');
 	}
 
-	orderLimit = tree.find({price:order.limit});
+	orderLimit = tree.find({getPrice:function() { return order.limit; }});
 	if (orderLimit === null) {
 		orderLimit = new Limit.Limit(order.limit);
 		tree.insert(orderLimit);
