@@ -30,16 +30,16 @@ OrderBook.prototype.limit = function(order) {
 		throw new Error('Order type must be bid or ask');
 	}
 
-	orderLimit = tree.find({getPrice:function() { return order.limit; }});
+	orderLimit = tree.find({getPrice:function() { return order.price; }});
 	if (orderLimit === null) {
-		orderLimit = new Limit.Limit(order.limit);
+		orderLimit = new Limit.Limit(order.price);
 		tree.insert(orderLimit);
 	}
 	orderLimit.addOrder(order);
 
-	if (order.isBid() && this.bestBid() < order.limit) {
+	if (order.isBid() && this.bestBid() < order.price) {
 		this._highestBid = orderLimit;
-	} else if (order.isAsk() && this.bestAsk() > order.limit) {
+	} else if (order.isAsk() && this.bestAsk() > order.price) {
 		this._lowestAsk = orderLimit;
 	}
 	

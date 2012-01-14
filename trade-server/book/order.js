@@ -7,9 +7,9 @@ function OrderTypesEnum() {
 
 var OrderTypes = new OrderTypesEnum();
 
-function Order(id, orderType, limit, numShares, entryTime) {
+function Order(id, orderType, price, numShares, entryTime) {
 	this.id = id;
-	this.limit = limit;
+	this.price = price;
 	this.orderType = orderType;
 	this.numShares = numShares;
 	this.entryTime = entryTime;
