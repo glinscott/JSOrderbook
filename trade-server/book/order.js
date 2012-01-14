@@ -1,3 +1,5 @@
+var assert = require('assert');
+
 function OrderTypesEnum() {
 	this.Bid = 0;
 	this.Ask = 1;
@@ -38,6 +40,11 @@ Order.prototype.getParentLimit = function() {
 
 Order.prototype.book = function(parentLimit) {
 	this._parentLimit = parentLimit;
+};
+
+Order.prototype.fill = function(size) {
+	this.filled += size;
+	assert(this.filled <= this.numShares);
 };
 
 Order.prototype.getAvailableShares = function() {

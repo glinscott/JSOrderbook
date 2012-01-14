@@ -93,6 +93,26 @@ OrderBook.prototype.post = function(order, offset) {
 };
 
 //////////////////////////////////////
+// Book introspection
+//////////////////////////////////////
+
+OrderBook.prototype.allBidLimits = function() {
+	return this._allLimits(this._bidTree);
+};
+
+OrderBook.prototype.allAskLimits = function() {
+	return this._allLimits(this._askTree);
+};
+
+OrderBook.prototype._allLimits = function(tree) {
+	var limits = [];
+	tree.each(function(limit) {
+		limits.push(limit);
+	});
+	return limits;
+};
+
+//////////////////////////////////////
 // Execution
 //////////////////////////////////////
 
@@ -104,22 +124,16 @@ OrderBook.prototype._execute = function() {
 	var crossSize = min(bidHead.getAvailableShares(), askHead.getAvailableShares());
 	
 	// Execute the trade at the bid price, for crossSize shares
-	bidHead.filled += crossSize;
-	askHead.filled += crossSize;
+	this._highestBid.fill(crossSize);
+	this._lowestAsk.fill(crossSize);
 	
-	if (bidHead.getAvailableShares() === 0) {
-		this._highestBid.removeOrder(bidHead);
-		if (this._highestBid.isEmpty()) {
-			this._bidTree.remove(this._highestBid);
-			this._highestBid = this._bidTree.max();
-		}
+	if (this._highestBid.isEmpty()) {
+		this._bidTree.remove(this._highestBid);
+		this._highestBid = this._bidTree.max();
 	}
-	if (askHead.getAvailableShares() === 0) {
-		this._lowestAsk.removeOrder(askHead);
-		if (this._lowestAsk.isEmpty()) {
-			this._askTree.remove(this._lowestAsk);			
-			this._lowestAsk = this._askTree.min();
-		}
+	if (this._lowestAsk.isEmpty()) {
+		this._askTree.remove(this._lowestAsk);			
+		this._lowestAsk = this._askTree.min();
 	}
 };
 

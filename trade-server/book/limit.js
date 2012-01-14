@@ -29,6 +29,16 @@ Limit.prototype.isEmpty = function() {
 	return this._ordersHead === null;
 };
 
+Limit.prototype.fill = function(size) {
+	this._ordersHead.fill(size);
+	this._totalVolume -= size;
+	assert.ok(this._totalVolume >= 0);
+	
+	if (this._ordersHead.getAvailableShares() === 0) {
+		this.removeOrder(this._ordersHead);
+	}
+};
+
 Limit.prototype.addOrder = function(order) {
 	if (order.isBooked()) {
 		throw new Error('Order has already been added');
