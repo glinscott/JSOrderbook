@@ -79,6 +79,12 @@ OrderBook.prototype.bestAsk = function() {
 // Market Order - executes immediately at the best price possible.
 // Returns the id of the executed order.
 OrderBook.prototype.market = function(order) {
+	if (order.isAsk()) {
+		order.price = Price.BestAsk;
+	} else if (order.isBid()) {
+		order.price = Price.BestBid;
+	}
+	return this.limit(order);
 };
 
 // Replaces the given orderId with newOrder

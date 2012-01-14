@@ -3,6 +3,10 @@ var assert = require('assert');
 function OrderTypesEnum() {
 	this.Bid = 0;
 	this.Ask = 1;
+	this.BidAskMask = 1;
+	
+	this.Market = 2;
+	this.Post = 4;
 }
 
 var OrderTypes = new OrderTypesEnum();
@@ -23,11 +27,19 @@ function Order(id, orderType, price, numShares, entryTime) {
 }
 
 Order.prototype.isBid = function() {
-	return this.orderType === OrderTypes.Bid;
+	return (this.orderType & OrderTypes.BidAskMask) === OrderTypes.Bid;
 };
 
 Order.prototype.isAsk = function() {
-	return this.orderType === OrderTypes.Ask;
+	return (this.orderType & OrderTypes.BidAskMask) === OrderTypes.Ask;
+};
+
+Order.prototype.isMarket = function() {
+	return (this.orderType & OrderTypes.Market) !== 0;
+};
+
+Order.prototype.isPost = function() {
+	return (this.orderType & OrderTypes.Post) !== 0;
 };
 
 Order.prototype.isBooked = function() {
