@@ -29,6 +29,9 @@ Limit.prototype.isEmpty = function() {
 	return this._ordersHead === null;
 };
 
+// Execute a trade against the head order
+// Returns true if the head order has been totally satisfied as a result
+// Returns false if the head order remains on the book
 Limit.prototype.fill = function(size) {
 	this._ordersHead.fill(size);
 	this._totalVolume -= size;
@@ -36,7 +39,10 @@ Limit.prototype.fill = function(size) {
 	
 	if (this._ordersHead.getAvailableShares() === 0) {
 		this.removeOrder(this._ordersHead);
+		return true;
 	}
+	
+	return false;
 };
 
 Limit.prototype.addOrder = function(order) {
@@ -69,7 +75,7 @@ Limit.prototype.addOrder = function(order) {
 	this._ordersTail.nextOrder = order;
 	order.prevOrder = this._ordersTail;
 	
-	this._totalVolume += order.numShares;
+	this._totalVolume += order.getAvailableShares();
 };
 
 Limit.prototype.removeOrder = function(order) {
@@ -86,8 +92,8 @@ Limit.prototype.removeOrder = function(order) {
 	if (next !== null) {
 		next.prevOrder = prev;
 	}
-	
-	this._totalVolume -= order.numShares;
+
+	this._totalVolume -= order.getAvailableShares();
 	
 	if (order === this._ordersHead) {
 		this._ordersHead = next;

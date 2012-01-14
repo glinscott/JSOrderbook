@@ -1,3 +1,4 @@
+var assert = require('assert');
 var Tree = require('bintrees').RBTree;
 var Limit = require('./limit');
 var Price = require('./price').Price;
@@ -11,6 +12,9 @@ function OrderBook() {
 	this._askTree = new Tree(compareLimit);
 	this._highestBid = null;
 	this._lowestAsk = null;
+	
+	// Map from orderId to order
+	this._orders = {};
 }
 
 //////////////////////////////////////
@@ -39,6 +43,11 @@ OrderBook.prototype.limit = function(order) {
 		tree.insert(orderLimit);
 	}
 	orderLimit.addOrder(order);
+	
+	if (this._orders.hasOwnProperty(order.id)) {
+		throw new Error('Order id already added');
+	}
+	this._orders[order.id] = order;
 
 	if (order.isBid() && this.bestBid() < order.price) {
 		this._highestBid = orderLimit;
@@ -56,7 +65,19 @@ OrderBook.prototype.limit = function(order) {
 
 // Cancels the given order, removing it from the book.
 OrderBook.prototype.cancel = function(orderId) {
+	var order = this._orders[orderId];
+	if (order === undefined) {
+		throw new Error('Order is not booked');
+	}
+
+	assert.equal(order.isBooked(), true);
+	order.getParentLimit().removeOrder(order);
 	
+	if (order.isBid()) {
+		this._postProcessBid(order);
+	} else {
+		this._postProcessAsk(order);
+	}	
 };
 
 // Returns the best bid (buying) price
@@ -133,13 +154,24 @@ OrderBook.prototype._execute = function() {
 	var crossSize = min(bidHead.getAvailableShares(), askHead.getAvailableShares());
 	
 	// Execute the trade at the bid price, for crossSize shares
-	this._highestBid.fill(crossSize);
-	this._lowestAsk.fill(crossSize);
-	
+	if (this._highestBid.fill(crossSize)) {
+		this._postProcessBid(bidHead);
+	}
+	if (this._lowestAsk.fill(crossSize)) {
+		this._postProcessAsk(askHead);
+	}
+};
+
+OrderBook.prototype._postProcessBid = function(bid) {
+	delete this._orders[bid.id];
 	if (this._highestBid.isEmpty()) {
 		this._bidTree.remove(this._highestBid);
 		this._highestBid = this._bidTree.max();
-	}
+	}			
+};
+
+OrderBook.prototype._postProcessAsk = function(ask) {
+	delete this._orders[ask.id];
 	if (this._lowestAsk.isEmpty()) {
 		this._askTree.remove(this._lowestAsk);			
 		this._lowestAsk = this._askTree.min();
