@@ -126,10 +126,10 @@ function testPostOrder() {
 	
 	// Can't place post orders when the book is empty
 	assert.throws(function() {
-		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Bid, 0, 10), 5)
+		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Bid, 0, 10), 5);
 	}, /no ask/);
 	assert.throws(function() {
-		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Ask, 0, 10), 5)
+		t.book.post(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Ask, 0, 10), 5);
 	}, /no bid/);
 
 	// Normal tests
