@@ -65,7 +65,9 @@ function testBasics() {
 	var t = new TestHarness();
 	
 	t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
+	// Partial fill
 	t.placeOrder(createOrder(Order.OrderTypes.Ask, 12, 5), 15, Price.NoAsk, 5, 0);
+	// Incremental over fill
 	t.placeOrder(createOrder(Order.OrderTypes.Ask, 16, 10), 15, 16, 5, 10);
 	t.placeOrder(createOrder(Order.OrderTypes.Ask, 14, 6), Price.NoBid, 14, 0, 11);
 }
@@ -89,7 +91,7 @@ function testCancel() {
 		t.cancelOrder(o[1].id, Price.NoBid, 16, 0, 5);
 	}, /not booked/, "Can't cancel an order that is no longer on the book");
 	t.cancelOrder(o[2].id, Price.NoBid, Price.NoAsk, 0, 0);
-	
+
 	// Round 2, cancel in different order
 	o = setup();
 	t.cancelOrder(o[2].id, 15, Price.NoAsk, 5, 0);
@@ -98,7 +100,7 @@ function testCancel() {
 
 function testMarketOrder() {
 	var t = new TestHarness();
-	
+
 	t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
 	t.placeOrder(createOrder(Order.OrderTypes.Ask, 20, 10), 15, 20, 10, 10);
 	t.placeOrder(createOrder(Order.OrderTypes.Market | Order.OrderTypes.Bid, 0, 8), 15, 20, 10, 2);

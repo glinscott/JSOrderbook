@@ -36,7 +36,7 @@ OrderBook.prototype._getTreeForOrder = function(order) {
 // Places an order at a given price.  Can be a bid or ask.
 OrderBook.prototype.limit = function(order) {
 	var tree = this._getTreeForOrder(order),
-			orderLimit = tree.find({getPrice:function() { return order.price; }});;
+			orderLimit = tree.find({getPrice:function() { return order.price; }});
 
 	if (orderLimit === null) {
 		orderLimit = new Limit.Limit(order.price);
