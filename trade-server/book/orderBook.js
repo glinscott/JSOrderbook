@@ -17,20 +17,23 @@ function OrderBook() {
 // Core
 //////////////////////////////////////
 
-// Limit Order
-// Places an order at a given price.  Can be a bid or ask.
-OrderBook.prototype.limit = function(order) {
-	var orderLimit, tree;
-
+// Returns the appropriate limit tree for the order
+OrderBook.prototype._getTreeForOrder = function(order) {
 	if (order.isBid()) {
-		tree = this._bidTree;
+		return this._bidTree;
 	} else if (order.isAsk()) {
-		tree = this._askTree;
+		return this._askTree;
 	} else {
 		throw new Error('Order type must be bid or ask');
 	}
+};
 
-	orderLimit = tree.find({getPrice:function() { return order.price; }});
+// Limit Order
+// Places an order at a given price.  Can be a bid or ask.
+OrderBook.prototype.limit = function(order) {
+	var tree = this._getTreeForOrder(order),
+			orderLimit = tree.find({getPrice:function() { return order.price; }});;
+
 	if (orderLimit === null) {
 		orderLimit = new Limit.Limit(order.price);
 		tree.insert(orderLimit);
