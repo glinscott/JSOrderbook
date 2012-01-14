@@ -1,4 +1,6 @@
 var assert = require('assert');
+var _ = require('underscore');
+
 var Order = require('../book/order');
 var OrderBook = require('../book/orderBook');
 var Price = require('../book/price').Price;
@@ -48,17 +50,17 @@ function TestHarness() {
 		assert.equal(this.book.bestBid(), bestBid);
 		assert.equal(this.book.bestAsk(), bestAsk);
 
-		// TOOD: use underscore for this
-		bidLimits = this.book.allBidLimits();
-		for (i = 0; i < bidLimits.length; i++) {
-			newBidVol += bidLimits[i].getTotalVolume();
-		}
+		var sumVolumes = function(volumes) {
+			return _.reduce(
+				volumes,
+				function(memo, num){ return memo + num.getTotalVolume(); },
+				0 );
+		};
+		
+		newBidVol = sumVolumes(this.book.allBidLimits());
 		assert.equal(newBidVol, expectedBidVol);
 
-		askLimits = this.book.allAskLimits();
-		for (i = 0; i < askLimits.length; i++) {
-			newAskVol += askLimits[i].getTotalVolume();
-		}
+		newAskVol += sumVolumes(this.book.allAskLimits());
 		assert.equal(newAskVol, expectedAskVol);
 		
 		return order;
