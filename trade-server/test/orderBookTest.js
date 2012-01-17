@@ -67,7 +67,7 @@ function TestHarness() {
 	};
 }
 
-function testBasics() {
+exports.testBasics = function() {
 	var t = new TestHarness();
 	
 	t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
@@ -78,7 +78,7 @@ function testBasics() {
 	t.placeOrder(createOrder(Order.OrderTypes.Ask, 14, 6), Price.NoBid, 14, 0, 11);
 }
 
-function testCancel() {
+exports.testCancel = function() {
 	var t = new TestHarness(),
 			o;
 	
@@ -104,7 +104,7 @@ function testCancel() {
 	t.cancelOrder(o[0].id, Price.NoBid, Price.NoAsk, 0, 0);
 }
 
-function testMarketOrder() {
+exports.testMarketOrder = function() {
 	var t = new TestHarness();
 
 	t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
@@ -114,14 +114,14 @@ function testMarketOrder() {
 	t.placeOrder(createOrder(Order.OrderTypes.Market | Order.OrderTypes.Bid, 0, 6), Price.BestBid, Price.NoAsk, 6, 0);
 }
 
-function testReplaceOrder() {
+exports.testReplaceOrder = function() {
 	var t = new TestHarness();
 	var o1 = t.placeOrder(createOrder(Order.OrderTypes.Bid, 15, 10), 15, Price.NoAsk, 10, 0);
 	var o2 = t.placeOrder(createOrder(Order.OrderTypes.Ask, 20, 10), 15, 20, 10, 10);
 	t.replaceOrder(o2.id, createOrder(Order.OrderTypes.Ask, 15, 5), 15, Price.NoAsk, 5, 0);
 }
 
-function testPostOrder() {
+exports.testPostOrder = function() {
 	var t = new TestHarness();
 	
 	// Can't place post orders when the book is empty
@@ -138,9 +138,3 @@ function testPostOrder() {
 	t.placeOrder(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Bid, 0, 4), 5, 20, 10, 6);
 	t.placeOrder(createOrder(Order.OrderTypes.Post | Order.OrderTypes.Ask, 0, 6), 5, 20, 4, 6);
 }
-
-testBasics();
-testCancel();
-testMarketOrder();
-testReplaceOrder();
-testPostOrder();

@@ -7,7 +7,7 @@ function createOrder(type, numShares) {
 	return new Order.Order(orderId++, type, 100, numShares, 0);
 }
 
-function testAddRemove() {
+exports.testAddRemove = function() {
 	var testLimit = new Limit.Limit(100);
 	var order1 = createOrder(Order.OrderTypes.Bid, 10);
 	assert.equal(order1.isBooked(), false);
@@ -42,14 +42,14 @@ function createDefaultLimit() {
 	return {orders:orders, limit:testLimit};	
 }
 
-function testRemoveMiddle() {
+exports.testRemoveMiddle = function() {
 	var t = createDefaultLimit();
 	t.limit.removeOrder(t.orders[1]);
 	assert.equal(t.limit.getHead(), t.orders[0]);
 	assert.equal(t.limit.getTotalVolume(), 20);
 }
 
-function testRemoveAdd() {
+exports.testRemoveAdd = function() {
 	var t = createDefaultLimit();
 	t.limit.removeOrder(t.orders[2]);
 	assert.equal(t.limit.getTotalVolume(), 20);
@@ -58,14 +58,9 @@ function testRemoveAdd() {
 	assert.equal(t.limit.getTotalVolume(), 30);
 }
 
-function testAddOrderTwice() {
+exports.testAddOrderTwice = function() {
 	var t = createDefaultLimit();
 	assert.throws(function() {
 		t.limit.addOrder(t.orders[0]);
 	});
 }
-
-testAddRemove();
-testRemoveMiddle();
-testRemoveAdd();
-testAddOrderTwice();
