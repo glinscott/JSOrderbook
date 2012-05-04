@@ -25,6 +25,10 @@ Limit.prototype.getHead = function() {
 	return this._ordersHead;
 };
 
+Limit.prototype.getTail = function() {
+	return this._ordersTail;
+}
+
 Limit.prototype.isEmpty = function() {
 	return this._ordersHead === null;
 };
@@ -74,6 +78,7 @@ Limit.prototype.addOrder = function(order) {
 	
 	this._ordersTail.nextOrder = order;
 	order.prevOrder = this._ordersTail;
+	this._ordersTail = order;
 	
 	this._totalVolume += order.getAvailableShares();
 };

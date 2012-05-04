@@ -19,6 +19,7 @@ exports.testAddRemove = function() {
 	var order2 = createOrder(Order.OrderTypes.Bid, 15);
 	testLimit.addOrder(order2);
 	assert.equal(testLimit.getHead(), order1);
+	assert.equal(testLimit.getTail(), order2);
 	assert.equal(testLimit.getTotalVolume(), 25);
 	
 	testLimit.removeOrder(order1);
