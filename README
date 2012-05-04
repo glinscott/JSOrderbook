@@ -1,0 +1,3 @@
+Implementation of a very basic order book in Javascript.
+
+O(logn) to find the limit price, then O(1) to add/remove orders.
